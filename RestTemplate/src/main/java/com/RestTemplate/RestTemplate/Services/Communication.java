@@ -66,7 +66,7 @@ public class Communication {
                 requestEntity,
                 String.class // Ожидаем String (вторую часть кода)
         );
-        Cookie(response);
+        //Cookie(response);
 
         return response;
     }

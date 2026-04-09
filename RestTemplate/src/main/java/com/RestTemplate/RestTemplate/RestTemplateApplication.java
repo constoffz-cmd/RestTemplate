@@ -75,7 +75,7 @@ public class RestTemplateApplication implements CommandLineRunner {
 			}
 
 
-			String codePart3 = communication.deleteUser(2L);
+			String codePart3 = communication.deleteUser(3L);
 			finalCode.append(codePart3);
 			//System.out.println("Пользователь успешно удален. Третья часть кода: " + codePart3);
 
