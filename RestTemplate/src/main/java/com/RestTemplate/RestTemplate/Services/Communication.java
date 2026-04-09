@@ -1,13 +1,11 @@
 package com.RestTemplate.RestTemplate.Services;
 
 import com.RestTemplate.RestTemplate.model.User;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -53,7 +51,7 @@ public class Communication {
                 requestEntity,
                 String.class // Ожидаем String (первую часть кода)
         );
-        Cookie(response);
+        //Cookie(response);
         return response;
     }
 
@@ -68,30 +66,34 @@ public class Communication {
                 requestEntity,
                 String.class // Ожидаем String (вторую часть кода)
         );
+        Cookie(response);
 
         return response;
     }
 
-    public ResponseEntity<String> deleteUser(Long userId) {
+    public String deleteUser(Long userId) {
         HttpHeaders headers = createSessionHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers); // Для DELETE тела обычно нет
-
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         // DELETE запрос на /api/users/{id}
-        String url = URL + "/" + userId;
+        /*String url = URL + "/" + userId;
         ResponseEntity<String> response = restTemplate.exchange(
                 url,
                 HttpMethod.DELETE,
                 requestEntity,
                 String.class // Ожидаем String (третью часть кода)
         );
-        return response;
+        return response;*/
+
+        return restTemplate.exchange(
+                URL + "/" + userId, HttpMethod.DELETE, requestEntity, String.class).getBody();
     }
 
     private HttpHeaders createSessionHeaders() {
         HttpHeaders headers = new HttpHeaders();
         if (this.sessionID != null) {
             // Вставляем полученный session id в заголовок Cookie
-            System.out.println(this.sessionID);
+            //System.out.println(this.sessionID);
             headers.add("Cookie", this.sessionID);
         }
         return headers;
@@ -100,20 +102,22 @@ public class Communication {
     public void Cokie(ResponseEntity<List<User>> response) {
 
         String setCookieHeader = response.getHeaders().getFirst("set-cookie");
-        if (setCookieHeader != null) {
+        /*if (setCookieHeader != null) {
             String[] parts = setCookieHeader.split(";");
             this.sessionID = parts[0];
             System.out.println("Сохранен Session ID: " + this.sessionID);
-        }
+        }*/
+        this.sessionID = setCookieHeader;
     }
 
     public void Cookie(ResponseEntity<String> response) {
 
         String setCookieHeader = response.getHeaders().getFirst("set-cookie");
-        if (setCookieHeader != null) {
+        /*if (setCookieHeader != null) {
             String[] parts = setCookieHeader.split(";");
             this.sessionID = parts[0];
             System.out.println("Сохранен Session ID: " + this.sessionID);
-        }
+        }*/
+        this.sessionID = setCookieHeader;
     }
 }

@@ -38,15 +38,15 @@ public class RestTemplateApplication implements CommandLineRunner {
 			System.out.println("--- Получение списка всех пользователей ---");
 			ResponseEntity<List<User>> usersResponse = communication.getAllUsers();
 			if (usersResponse.getStatusCode().is2xxSuccessful()) {
-				System.out.println("Список пользователей получен. Количество: " + Objects.requireNonNull(usersResponse.getBody()).size());
+				//System.out.println("Список пользователей получен. Количество: " + Objects.requireNonNull(usersResponse.getBody()).size());
 				//sessia = usersResponse.getHeaders().get("set-cookie"));
-				System.out.println("Cookies: " + usersResponse.getHeaders().get("set-cookie"));
+				//System.out.println("Cookies: " + usersResponse.getHeaders().get("set-cookie"));
 			} else {
 				System.err.println("Ошибка при получении списка пользователей: " + usersResponse.getStatusCode());
 				return;
 			}
 
-			System.out.println("\n--- Сохранение пользователя (id=3) ---");
+			//System.out.println("\n--- Сохранение пользователя (id=3) ---");
 			User newUser = new User(3L, "James", "Brown", (byte) 30); // Age на ваш выбор
 			ResponseEntity<String> createUserResponse = communication.createUser(newUser);
 
@@ -59,9 +59,10 @@ public class RestTemplateApplication implements CommandLineRunner {
 
 			}
 
+
 			System.out.println("\n--- Изменение пользователя (id=3) ---");
-			byte i = 25;
-			User updatedUser = new User(3L, "Thomas", "Shelby", i); // age не меняем, передаем null
+
+			User updatedUser = new User(3L, "Thomas", "Shelby", (byte) 25); // age не меняем, передаем null
 			ResponseEntity<String> updateUserResponse = communication.updateUser(updatedUser);
 
 			if (updateUserResponse.getStatusCode().is2xxSuccessful()) {
@@ -73,17 +74,11 @@ public class RestTemplateApplication implements CommandLineRunner {
 
 			}
 
-			System.out.println("\n--- Удаление пользователя (id=3) ---");
-			ResponseEntity<String> deleteUserResponse = communication.deleteUser(3L);
 
-			if (deleteUserResponse.getStatusCode().is2xxSuccessful()) {
-				String codePart3 = deleteUserResponse.getBody();
-				finalCode.append(codePart3);
-				System.out.println("Пользователь успешно удален. Третья часть кода: " + codePart3);
-			} else {
-				System.err.println("Ошибка при удалении пользователя: " + deleteUserResponse.getStatusCode());
-				return;
-			}
+			String codePart3 = communication.deleteUser(2L);
+			finalCode.append(codePart3);
+			//System.out.println("Пользователь успешно удален. Третья часть кода: " + codePart3);
+
 
 			System.out.println("\n---------------------------------------");
 			System.out.println("ИТОГОВЫЙ КОД: " + finalCode.toString());
