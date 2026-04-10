@@ -33,14 +33,9 @@ public class RestTemplateApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		try {
-			//String sessia;
-			// 1. Получить список всех пользователей
 			System.out.println("--- Получение списка всех пользователей ---");
 			ResponseEntity<List<User>> usersResponse = communication.getAllUsers();
 			if (usersResponse.getStatusCode().is2xxSuccessful()) {
-				//System.out.println("Список пользователей получен. Количество: " + Objects.requireNonNull(usersResponse.getBody()).size());
-				//sessia = usersResponse.getHeaders().get("set-cookie"));
-				//System.out.println("Cookies: " + usersResponse.getHeaders().get("set-cookie"));
 			} else {
 				System.err.println("Ошибка при получении списка пользователей: " + usersResponse.getStatusCode());
 				return;
@@ -77,8 +72,6 @@ public class RestTemplateApplication implements CommandLineRunner {
 
 			String codePart3 = communication.deleteUser(3L);
 			finalCode.append(codePart3);
-			//System.out.println("Пользователь успешно удален. Третья часть кода: " + codePart3);
-
 
 			System.out.println("\n---------------------------------------");
 			System.out.println("ИТОГОВЫЙ КОД: " + finalCode.toString());
