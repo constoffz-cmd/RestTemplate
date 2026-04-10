@@ -10,12 +10,14 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 @SpringBootApplication
 public class RestTemplateApplication implements CommandLineRunner {
 
 	private final Communication communication;
 	private final StringBuilder finalCode = new StringBuilder();
+	private Logger logger = Logger.getLogger(RestTemplateApplication.class.getName());
 
 	@Autowired
 	public RestTemplateApplication(Communication communication) {
@@ -33,53 +35,48 @@ public class RestTemplateApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		try {
-			System.out.println("--- Получение списка всех пользователей ---");
+			logger.info("\n--- Получение списка всех пользователей ---");
 			ResponseEntity<List<User>> usersResponse = communication.getAllUsers();
 			if (usersResponse.getStatusCode().is2xxSuccessful()) {
 			} else {
-				System.err.println("Ошибка при получении списка пользователей: " + usersResponse.getStatusCode());
+				logger.warning("Ошибка при получении списка пользователей: " + usersResponse.getStatusCode());
 				return;
 			}
 
-			//System.out.println("\n--- Сохранение пользователя (id=3) ---");
-			User newUser = new User(3L, "James", "Brown", (byte) 30); // Age на ваш выбор
+			logger.info("\n--- Сохранение пользователя (id=3) ---");
+			User newUser = new User(3L, "James", "Brown", (byte) 30);
 			ResponseEntity<String> createUserResponse = communication.createUser(newUser);
 
 			if (createUserResponse.getStatusCode().is2xxSuccessful()) {
 				String codePart1 = createUserResponse.getBody();
 				finalCode.append(codePart1);
-				System.out.println("Пользователь успешно создан. Первая часть кода: " + codePart1);
+				logger.info("\n---Пользователь успешно создан. Первая часть кода: " + codePart1);
 			} else {
-				System.err.println("Ошибка при создании пользователя: " + createUserResponse.getStatusCode());
+				logger.warning("Ошибка при создании пользователя: " + createUserResponse.getStatusCode());
 
 			}
 
-
-			System.out.println("\n--- Изменение пользователя (id=3) ---");
-
+			logger.info("\n--- Изменение пользователя (id=3) ---");
 			User updatedUser = new User(3L, "Thomas", "Shelby", (byte) 25); // age не меняем, передаем null
 			ResponseEntity<String> updateUserResponse = communication.updateUser(updatedUser);
 
 			if (updateUserResponse.getStatusCode().is2xxSuccessful()) {
 				String codePart2 = updateUserResponse.getBody();
 				finalCode.append(codePart2);
-				System.out.println("Пользователь успешно изменен. Вторая часть кода: " + codePart2);
+				logger.info("\n---Пользователь успешно изменен. Вторая часть кода: " + codePart2);
 			} else {
-				System.err.println("Ошибка при изменении пользователя: " + updateUserResponse.getStatusCode());
+				logger.warning("Ошибка при изменении пользователя: " + updateUserResponse.getStatusCode());
 
 			}
 
-
 			String codePart3 = communication.deleteUser(3L);
 			finalCode.append(codePart3);
-
-			System.out.println("\n---------------------------------------");
-			System.out.println("ИТОГОВЫЙ КОД: " + finalCode.toString());
-			System.out.println("Длина кода: " + finalCode.length()); // Должно быть 18
+			logger.info("\n---ИТОГОВЫЙ КОД: " + finalCode.toString());
+			logger.info("\n---Длина кода: " + finalCode.length());
 
 
 		} catch (Exception e) {
-			System.err.println("Произошла непредвиденная ошибка: " + e.getMessage());
+			logger.warning("Произошла непредвиденная ошибка: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
